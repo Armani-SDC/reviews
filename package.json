@@ -1,0 +1,19 @@
+{
+  "name": "sdc",
+  "version": "1.0.0",
+  "description": "Server design capstone w/ Joseph Soto, Jonathan Sindorf, and Kyle Martinelli!",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Armani-SDC/SDC.git"
+  },
+  "author": "Joseph, Jonathan, and Kyle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Armani-SDC/SDC/issues"
+  },
+  "homepage": "https://github.com/Armani-SDC/SDC#readme"
+}
