@@ -4,7 +4,8 @@
   "description": "Server design capstone w/ Joseph Soto, Jonathan Sindorf, and Kyle Martinelli!",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "server-dev": "npx nodemon server/index.js"
   },
   "repository": {
     "type": "git",
