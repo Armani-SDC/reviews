@@ -1,4 +1,4 @@
-CREATE SCHEMA reviewSchema
+CREATE SCHEMA reviewSchema;
 
 CREATE TABLE photos (
   id serial PRIMARY KEY,
