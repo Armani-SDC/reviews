@@ -1,7 +1,7 @@
 const models = require('../models');
 
 module.exports = {
-  get: function (req, res) {
+  get: (req, res) => {
     models.products.get((err, data) => {
       if (err) {
         console.log(err);
