@@ -1,5 +1,4 @@
 const axios = require('axios');
+const database = require('../postgres');
 
-exports.get = (callback) => {
-  // Here I would call my product api
-};
+exports.get = (product_id) => (database.readMeta(product_id)); // implicit return
