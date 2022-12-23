@@ -1,2 +1,2 @@
-///
-exports.products = require('./products');
+exports.reviews = require('./reviews');
+exports.meta = require('./meta');
