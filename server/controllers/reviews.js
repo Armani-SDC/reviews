@@ -7,7 +7,7 @@ exports.get = (req, res) => {
   } else {
     models.reviews.get(req.query.product_id)
       .then((data) => {
-        res.status(201).send(data.rows);
+        res.status(201).send(data);
       })
       .catch(() => {
         res.sendStatus(501);
