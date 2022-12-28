@@ -24,15 +24,14 @@ exports.get = (data) => (
           helpfulness: response.rows[i].helpfulness,
           // photos: [], //Todo get photos working
           // eslint-disable-next-line no-await-in-loop
-          photos: await Promise.resolve(database.getPhotos(response.rows[i].id)),
+          photos: await (database.readPhotos(response.rows[i].id)),
         };
-        console.log('response', response.rows);
+        // console.log('response', response.rows);
 
         modifiedResponse.results.push(newObj);
       }
-      console.log('photos response', await Promise.resolve(database.getPhotos(response.rows[0].id)));
       return Promise.resolve(modifiedResponse);
-    }).catch(() => console.log('error in model i guess'))
+    }).catch((err) => console.log('error in model: ', err.message))
 );
 
 

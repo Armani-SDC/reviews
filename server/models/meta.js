@@ -4,7 +4,7 @@ const database = require('../postgres');
 
 exports.get = (product_id) => (
   database.readReviews(product_id)
-    .then((response) => {
+    .then(async (response) => {
       console.log(response.rows);
       const modifiedResponse = {
         product_id,
@@ -17,15 +17,22 @@ exports.get = (product_id) => (
       };
       for (let i = 0; i < response.rows.length; i += 1) {
         if (response.rows[i].recommend) {
-          // modifiedResponse.recommend['1'] += 1;
+          modifiedResponse.recommended['1'] += 1;
         } else {
-          // modifiedResponse.recommend['0'] += 1;
+          modifiedResponse.recommended['0'] += 1;
         }
-        // if (modifiedResponse.ratings[response.rows[i].rating] === undefined) {
-        //   modifiedResponse.ratings[response.rows[i].rating] = 1;
-        // } else {
-        //   modifiedResponse.ratings[response.rows[i].rating] += 1;
-        // }
+        if (modifiedResponse.ratings[response.rows[i].rating] === undefined) {
+          modifiedResponse.ratings[response.rows[i].rating] = 1;
+        } else {
+          modifiedResponse.ratings[response.rows[i].rating] += 1;
+        }
+        // eslint-disable-next-line no-await-in-loop
+        let characteristics = await database.readMeta(response.rows[i].id);
+        for (let j = 0; j < characteristics.length; j += 1) {
+          modifiedResponse.characteristics[characteristics[i].name] = {};
+          modifiedResponse.characteristics[characteristics[i].name].id = characteristics[i].characteristics_id;
+          modifiedResponse.characteristics[characteristics[i].name].value = characteristics[i].value;
+        }
       }
       return Promise.resolve(modifiedResponse);
     })

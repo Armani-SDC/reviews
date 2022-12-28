@@ -7,8 +7,8 @@ exports.get = (req, res) => {
   } else {
     models.meta.get(req.query.product_id)
       .then((data) => {
-        console.log('data', data.rows);
-        res.status(201).send(data.rows);
+        console.log('data', data);
+        res.status(201).send(data);
       })
       .catch(() => {
         res.sendStatus(501);

@@ -7,19 +7,21 @@ const pool = new Pool({
 
 // query per product
 // can pass in rowMode?: 'array' to get an array ack
-exports.readMeta = (product_id) => (// modify to look at reviews first
-  pool.query('Select * from meta where review_id=$1', [product_id])
+exports.readMeta = (review_id) => (// modify to look at reviews first
+  pool.query('SELECT * FROM meta INNER JOIN characteristics ON meta.characteristics_id = characteristics.id AND review_id=$1', [review_id])
+    .then((response) => response.rows)
+    .catch((err) => {
+      console.log('error in meta query', err.message);
+    })
 );
 
-exports.readReviews = (product_id) => (
-  pool.query('SELECT * FROM reviews WHERE product_id=$1', [product_id])
-  // Promise.all([
-  //   pool.query('SELECT * FROM reviews WHERE product_id=$1', [product_id]),
-  //   pool.query('SELECT * FROM photos INNER JOIN reviews ON photos.review_id = reviews.id')// THIS WOULD RETURN A LOT OF QUERIES
-  // ]);
+exports.readReviews = (queryParams) => (
+  pool.query('SELECT * FROM reviews WHERE product_id=$1', [queryParams])
+  // { page: '1', count: '1', sort: 'newest', product_id: '1' }
+  // ['1', '1', newest, '1']
 );
 
-exports.getPhotos = (review_id) => (
+exports.readPhotos = (review_id) => (
   pool.query('SELECT * FROM photos WHERE review_id=$1', [review_id])
     .then((response) => {
       const retArr = [];
