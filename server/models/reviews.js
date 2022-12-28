@@ -2,8 +2,8 @@ const axios = require('axios');
 const database = require('../postgres');
 
 exports.get = (data) => (
-  database.readReview(data)
-    .then((response) => {
+  database.readReviews(data)
+    .then(async (response) => {
       // TODO implement count and page
       const modifiedResponse = {
         product: response.rows[0].product_id,
@@ -11,7 +11,6 @@ exports.get = (data) => (
         count: response.rows.length,
         results: [],
       };
-      console.log('here', response.rows);
       for (let i = 0; i < response.rows.length; i += 1) {
         const newObj = { // todo: add photos
           review_id: response.rows[i].id,
@@ -23,9 +22,15 @@ exports.get = (data) => (
           date: response.rows[i].date,
           reviewer_name: response.rows[i].reviewer_name,
           helpfulness: response.rows[i].helpfulness,
+          // photos: [], //Todo get photos working
+          // eslint-disable-next-line no-await-in-loop
+          photos: await Promise.resolve(database.getPhotos(response.rows[i].id)),
         };
+        console.log('response', response.rows);
+
         modifiedResponse.results.push(newObj);
       }
+      console.log('photos response', await Promise.resolve(database.getPhotos(response.rows[0].id)));
       return Promise.resolve(modifiedResponse);
     }).catch(() => console.log('error in model i guess'))
 );
