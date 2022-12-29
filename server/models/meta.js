@@ -3,7 +3,7 @@ const axios = require('axios');
 const database = require('../postgres');
 
 exports.get = (product_id) => (
-  database.readReviews(product_id)
+  database.readReviews({ product_id, sort: 'meta' })
     .then(async (response) => {
       console.log(response.rows);
       const modifiedResponse = {
@@ -15,7 +15,8 @@ exports.get = (product_id) => (
         },
         characteristics: {},
       };
-      for (let i = 0; i < response.rows.length; i += 1) {
+      const responseLength = response.rows.length;
+      for (let i = 0; i < responseLength; i += 1) {
         if (response.rows[i].recommend) {
           modifiedResponse.recommended['1'] += 1;
         } else {
@@ -27,17 +28,29 @@ exports.get = (product_id) => (
           modifiedResponse.ratings[response.rows[i].rating] += 1;
         }
         // eslint-disable-next-line no-await-in-loop
-        let characteristics = await database.readMeta(response.rows[i].id);
+        const characteristics = await database.readMeta(response.rows[i].id);
+        // console.log('characteristics: ', characteristics);
+        // console.log('mod response in loop: ', modifiedResponse);
+        // add up all the values for a characteristic and then divide by total of reviews
         for (let j = 0; j < characteristics.length; j += 1) {
-          modifiedResponse.characteristics[characteristics[i].name] = {};
-          modifiedResponse.characteristics[characteristics[i].name].id = characteristics[i].characteristics_id;
-          modifiedResponse.characteristics[characteristics[i].name].value = characteristics[i].value;
+          const curName = characteristics[j].name;
+          if (modifiedResponse.characteristics[curName] === undefined) {
+            modifiedResponse.characteristics[characteristics[j].name] = {};
+            modifiedResponse.characteristics[curName].id = characteristics[j].characteristics_id;
+            modifiedResponse.characteristics[curName].value = characteristics[j].value;
+          } else {
+            modifiedResponse.characteristics[curName].value += characteristics[j].value;
+          }
         }
+      }
+      console.log('mod response after loop: ', modifiedResponse);
+      for(let element in modifiedResponse.characteristics) {
+        modifiedResponse.characteristics[element].value /= responseLength;
       }
       return Promise.resolve(modifiedResponse);
     })
     .catch((err) => {
-      console.log('error in metaReading', err.message);
+      console.log('error in metaReading: ', err);
     })
 ); // implicit return
 

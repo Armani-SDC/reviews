@@ -7,8 +7,8 @@ exports.get = (data) => (
       // TODO implement count and page
       const modifiedResponse = {
         product: response.rows[0].product_id,
-        page: 0,
-        count: response.rows.length,
+        page: data.page,
+        count: data.count,
         results: [],
       };
       for (let i = 0; i < response.rows.length; i += 1) {
