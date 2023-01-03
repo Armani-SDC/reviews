@@ -5,7 +5,7 @@ CREATE SCHEMA reviewSchema;
 DROP TABLE IF EXISTS photos CASCADE;
 
 CREATE TABLE photos (
-  id integer PRIMARY KEY,
+  id serial PRIMARY KEY,
   review_id integer,
   url text
 );
@@ -13,24 +13,24 @@ CREATE TABLE photos (
 
   DROP TABLE IF EXISTS reviews CASCADE;
 CREATE TABLE reviews (
-  id integer PRIMARY KEY,
+  id serial PRIMARY KEY,
   product_id integer,
   rating integer,
   date date,
   summary text,
   body text,
   recommend boolean,
-  reported boolean,
+  reported boolean DEFAULT false,
   reviewer_name text,
   reviewer_email text,
   response text,
-  helpfulness integer
+  helpfulness integer DEFAULT 0
 );
   -- copy reviews from '/Users/jonathan/HackReactor/sdc/reviews/csvs/reviews.csv' delimiter ',' header csv;
 
   DROP TABLE IF EXISTS meta CASCADE;
 CREATE TABLE meta (
-  id integer PRIMARY KEY,
+  id serial PRIMARY KEY,
   characteristics_id integer,
   review_id integer,
   value integer
@@ -39,7 +39,7 @@ CREATE TABLE meta (
 
   DROP TABLE IF EXISTS characteristics CASCADE;
 CREATE TABLE characteristics (
-  id integer PRIMARY KEY,
+  id serial PRIMARY KEY,
   product_id integer,
   name text
 );

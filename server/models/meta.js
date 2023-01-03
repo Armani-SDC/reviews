@@ -5,7 +5,7 @@ const database = require('../postgres');
 exports.get = (product_id) => (
   database.readReviews({ product_id, sort: 'meta' })
     .then(async (response) => {
-      console.log(response.rows);
+      // console.log(response.rows);
       const modifiedResponse = {
         product_id,
         ratings: {},
@@ -43,7 +43,7 @@ exports.get = (product_id) => (
           }
         }
       }
-      console.log('mod response after loop: ', modifiedResponse);
+      // console.log('mod response after loop: ', modifiedResponse);
       for(let element in modifiedResponse.characteristics) {
         modifiedResponse.characteristics[element].value /= responseLength;
       }

@@ -2,7 +2,7 @@
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  database: 'mydb',
+  database: 'reviewsdb',
 });
 
 // query per product
@@ -60,4 +60,10 @@ exports.modifyEntry = (params) => {
     return (pool.query('UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id=$1', [query]));
   }
   return (pool.query('UPDATE reviews SET reported = true WHERE id=$1', [query]));
+};
+
+exports.postReview = (reviewData) => {
+  console.log('review Data: ', reviewData);
+  return (
+    pool.query('INSERT INTO reviews (product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', reviewData));
 };

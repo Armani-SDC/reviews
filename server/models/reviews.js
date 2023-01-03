@@ -42,7 +42,17 @@ exports.put = (params) => (
     }))
 );
 
-/* What I get back
+exports.post = (reviewData, photoData, metaData) => (
+  database.postReview(Object.values(reviewData))
+    .then((data) => {
+      console.log('return data: ', data.rows);
+    })
+    .catch((err) => {
+      console.log('error writing to db: ', err.message);
+    })
+);
+
+/* format of db
 [
     {
         "id": 1,
@@ -59,33 +69,4 @@ exports.put = (params) => (
         "helpfulness": 8
     },
   ]
-*/
-/* What I want
-{
-  "product": "2",
-  "page": 0,
-  "count": 5,
-  "results": [
-    {
-      "review_id": 5,
-      "rating": 3,
-      "summary": "I'm enjoying wearing these shades",
-      "recommend": false,
-      "response": null,
-      "body": "Comfortable and practical.",
-      "date": "2019-04-14T00:00:00.000Z",
-      "reviewer_name": "shortandsweeet",
-      "helpfulness": 5,
-      "photos": [{
-          "id": 1,
-          "url": "urlplaceholder/review_5_photo_number_1.jpg"
-        },
-        {
-          "id": 2,
-          "url": "urlplaceholder/review_5_photo_number_2.jpg"
-        },
-        // ...
-      ]
-    },
-    {
 */

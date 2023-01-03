@@ -78,24 +78,24 @@ const postgres = require('postgres');
 
 const sql = postgres({
   host: '127.0.0.1',
-  database: 'mydb',
+  database: 'reviewsdb',
 });
 
 const processFile = async () => {
   const records = [];
   // BATCH ONE
-  // let startBatch = 2;
-  // let endBatch = 3000000;
+  const startBatch = 2;
+  const endBatch = 3000000;
   // BATCH TWO
-  const startBatch = 3000001;
-  const endBatch = null;
+  // const startBatch = 3000001;
+  // const endBatch = null;
   const parser = fs.createReadStream('reviews.csv')
     .pipe(csv.parse({
       from_line: startBatch,
       to_line: endBatch,
     }));
   for await (const record of parser) {
-    log('idr: ', record[0]);
+    console.log('idr: ', record[0]);
     record[3] = fns.fromUnixTime(record[3] / 1000);
     if (record[-1] === '') {
       record[-1] = null;
