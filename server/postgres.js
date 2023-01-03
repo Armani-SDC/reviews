@@ -62,8 +62,10 @@ exports.modifyEntry = (params) => {
   return (pool.query('UPDATE reviews SET reported = true WHERE id=$1', [query]));
 };
 
-exports.postReview = (reviewData) => {
+exports.postReview = (reviewData) => { // todo: fix error at primary key
+  // insert data into photos
+  // insert data into meta
   console.log('review Data: ', reviewData);
   return (
-    pool.query('INSERT INTO reviews (product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', reviewData));
+    pool.query('INSERT INTO reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) VALUES (DEFAULT,$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', reviewData));
 };

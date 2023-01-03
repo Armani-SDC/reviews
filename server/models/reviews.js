@@ -49,6 +49,8 @@ exports.post = (reviewData, photoData, metaData) => (
     })
     .catch((err) => {
       console.log('error writing to db: ', err.message);
+      console.log('DETAIL: ', err.detail);
+      // console.log()
     })
 );
 
