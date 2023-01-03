@@ -10,5 +10,7 @@ const controllers = require('./controllers');
 router.get('/meta', controllers.meta.get);
 
 router.get('/reviews', controllers.reviews.get);
+router.post('/reviews', controllers.reviews.post);
+router.put('/reviews/:review_id/:type', controllers.reviews.put);
 
 module.exports = router;

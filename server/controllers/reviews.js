@@ -17,3 +17,17 @@ exports.get = (req, res) => {
       });
   }
 };
+
+exports.post = (req, res) => {
+  res.send(req.body);
+};
+
+exports.put = (req, res) => {
+  models.reviews.put(req.params)
+    .then(() => {
+      res.sendStatus(201);
+    })
+    .catch(() => {
+      res.sendStatus(501);
+    });
+};

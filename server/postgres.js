@@ -52,3 +52,12 @@ exports.readPhotos = (review_id) => (
       console.log('error in photos query', err.message);
     })
 );
+
+exports.modifyEntry = (params) => {
+  // object id, type of entry
+  const query = [params.review_id];
+  if (params.type !== 'report') {
+    return (pool.query('UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id=$1', [query]));
+  }
+  return (pool.query('UPDATE reviews SET reported = true WHERE id=$1', [query]));
+};

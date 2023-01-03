@@ -34,6 +34,13 @@ exports.get = (data) => (
     }).catch((err) => console.log('error in model: ', err.message))
 );
 
+exports.put = (params) => (
+  (database.modifyEntry(params.review_id)
+    .then(() => Promise.resolve())
+    .catch((err) => {
+      console.log('error modifying entry', err.message);
+    }))
+);
 
 /* What I get back
 [
