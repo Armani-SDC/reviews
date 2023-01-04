@@ -38,6 +38,7 @@ exports.put = (params) => (
     .then(() => Promise.resolve())
     .catch((err) => {
       console.log('error modifying entry', err.message);
+      console.log('DETAIL', err.detail);
     }))
 );
 
