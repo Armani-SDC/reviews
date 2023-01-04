@@ -1,7 +1,7 @@
 const models = require('../models');
 
 exports.get = (req, res) => {
-  console.log(req.query);
+  // console.log(req.query);
   if (!req.query.product_id) {
     res.sendStatus(404);
   } else {

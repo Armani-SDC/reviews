@@ -47,15 +47,23 @@ exports.post = (reviewData, photoData, metaData) => (
   // insert data into meta
   database.postReview(Object.values(reviewData))
     .then(async (data) => {
+      const promises = [];
       for (let i = 0; i < photoData.length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
-        await database.postPhotos([data.rows[0].id, photoData[i]]);
+        promises.push(database.postPhotos([data.rows[0].id, photoData[i]]));
+        // await database.postPhotos([data.rows[0].id, photoData[i]]);
       }
       const metaDataNames = Object.keys(metaData);
       for (let i = 0; i < metaDataNames.length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
-        await database.postChar([data.rows[0].id, metaData[metaDataNames[i]].id, metaData[metaDataNames[i]].value])
+        // await database.postChar([data.rows[0].id,
+        // metaData[metaDataNames[i]].id,
+        // metaData[metaDataNames[i]].value])
+        promises.push(database.postChar([data.rows[0].id,
+          metaData[metaDataNames[i]].id,
+          metaData[metaDataNames[i]].value]));
       }
+      Promise.all(promises);
       // get characteristics data where product id
       // modify metaData using characteristics_id
     })
