@@ -4,7 +4,9 @@ const database = require('../postgres');
 exports.get = (data) => (
   database.readReviews(data)
     .then(async (response) => {
-      // TODO implement count and page
+      if (response.rows.length === 0) { // if there is no reviews
+        return Promise.resolve({});
+      }
       const modifiedResponse = {
         product: response.rows[0].product_id,
         page: data.page,
@@ -12,7 +14,7 @@ exports.get = (data) => (
         results: [],
       };
       for (let i = 0; i < response.rows.length; i += 1) {
-        const newObj = { // todo: add photos
+        const newObj = {
           review_id: response.rows[i].id,
           rating: response.rows[i].rating,
           summary: response.rows[i].summary,
