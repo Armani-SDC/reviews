@@ -5,10 +5,10 @@ export const options = {
   scenarios: {
     ramp_up_requests: {
       executor: 'ramping-vus',
-      startVUs: 0,
+      startVUs: 100,
       stages: [
-        {duration : '2s', target: 1000},
-        {duration : '18s', target: 1000},
+        {duration : '1s', target: 1050},
+        {duration : '19s', target: 1050},
       ]
     }
   }
