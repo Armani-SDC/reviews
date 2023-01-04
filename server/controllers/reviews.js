@@ -32,10 +32,7 @@ exports.post = (req, res) => {
     response: null,
     helpfulness: 0,
   };
-  const photoData = [];
-  for (let i = 0; i < req.body.photos.length; i += 1) {
-    photoData.push(req.body.photos[i]);
-  }
+  const photoData = req.body.photos;
   const metaData = { ...req.body.characteristics };
 
   models.reviews.post(reviewData, photoData, metaData)

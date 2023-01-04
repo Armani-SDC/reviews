@@ -55,3 +55,7 @@ CREATE TABLE characteristics (
   copy meta from '/Users/jonathan/HackReactor/sdc/reviews/csvs/characteristic_reviews.csv' delimiter ',' header csv;
 
   copy photos from '/Users/jonathan/HackReactor/sdc/reviews/csvs/reviews_photos.csv' delimiter ',' header csv;
+
+  SELECT setval('photos_id_seq', max(id)) FROM photos;
+  SELECT setval('meta_id_seq', max(id)) FROM meta;
+  SELECT setval('characteristics_id_seq', max(id)) FROM characteristics;

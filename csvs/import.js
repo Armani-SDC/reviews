@@ -110,7 +110,7 @@ async function importQuery() {
   // console.log('after processFile', records);
   records.forEach(async (record) => {
     await sql`INSERT INTO reviews VALUES (
-      ${Number(record[0])}, ${Number(record[1])},
+      DEFAULT, ${Number(record[1])},
       ${Number(record[2])}, ${record[3]}, ${record[4]},
       ${record[5]}, ${record[6]}, ${record[7]},
       ${record[8]}, ${record[9]}, ${record[10]},

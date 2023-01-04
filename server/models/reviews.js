@@ -22,7 +22,6 @@ exports.get = (data) => (
           date: response.rows[i].date,
           reviewer_name: response.rows[i].reviewer_name,
           helpfulness: response.rows[i].helpfulness,
-          // photos: [], //Todo get photos working
           // eslint-disable-next-line no-await-in-loop
           photos: await (database.readPhotos(response.rows[i].id)),
         };
@@ -43,9 +42,21 @@ exports.put = (params) => (
 );
 
 exports.post = (reviewData, photoData, metaData) => (
+  // insert data into photos
+  // insert data into meta
   database.postReview(Object.values(reviewData))
-    .then((data) => {
-      console.log('return data: ', data.rows);
+    .then(async (data) => {
+      for (let i = 0; i < photoData.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        await database.postPhotos([data.rows[0].id, photoData[i]]);
+      }
+      const metaDataNames = Object.keys(metaData);
+      for (let i = 0; i < metaDataNames.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        await database.postChar([data.rows[0].id, metaData[metaDataNames[i]].id, metaData[metaDataNames[i]].value])
+      }
+      // get characteristics data where product id
+      // modify metaData using characteristics_id
     })
     .catch((err) => {
       console.log('error writing to db: ', err.message);
