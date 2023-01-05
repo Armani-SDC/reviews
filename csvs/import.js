@@ -84,11 +84,11 @@ const sql = postgres({
 const processFile = async () => {
   const records = [];
   // BATCH ONE
-  // const startBatch = 2;
-  // const endBatch = 2850000;
+  const startBatch = 2;
+  const endBatch = 2850000;
   // BATCH TWO
-  const startBatch = 2850001;
-  const endBatch = null;
+  // const startBatch = 2850001;
+  // const endBatch = null;
   const parser = fs.createReadStream('reviews.csv')
     .pipe(csv.parse({
       from_line: startBatch,

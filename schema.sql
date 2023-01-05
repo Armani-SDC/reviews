@@ -50,8 +50,7 @@ CREATE TABLE characteristics (
 -- ALTER TABLE photos ADD FOREIGN KEY (review_id) REFERENCES reviews (id);
 -- ALTER TABLE meta ADD FOREIGN KEY (characteristics_id) REFERENCES characteristics (id);
 
-  CREATE INDEX idx_reviews_product_id ON reviews(product_id);
-  CREATE INDEX idx_photos_review_id ON photos(review_id);
+
   -- CREATE INDEX idx_reviews_date ON reviews(date); Didn't impact significantly
 
 
@@ -60,6 +59,10 @@ CREATE TABLE characteristics (
   copy meta from '/Users/jonathan/HackReactor/sdc/reviews/csvs/characteristic_reviews.csv' delimiter ',' header csv;
 
   copy photos from '/Users/jonathan/HackReactor/sdc/reviews/csvs/reviews_photos.csv' delimiter ',' header csv;
+
+  CREATE INDEX idx_reviews_product_id ON reviews(product_id);
+  CREATE INDEX idx_photos_review_id ON photos(review_id);
+  CREATE INDEX idx_meta_review_id ON meta(review_id);
 
   SELECT setval('photos_id_seq', max(id)) FROM photos;
   SELECT setval('meta_id_seq', max(id)) FROM meta;
