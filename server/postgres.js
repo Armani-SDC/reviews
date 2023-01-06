@@ -2,6 +2,11 @@
 const { Pool } = require('pg');
 
 const pool = new Pool({
+  // user: 'ubuntu',
+  // host: 'ec2-54-209-73-91.compute-1.amazonaws.com',
+  // database: 'reviewsdb',
+  // password: 'password',
+  // port: 5432,
   database: 'reviewsdb',
 });
 
@@ -19,25 +24,44 @@ exports.readReviews = (queryParams) => {
   const params = [queryParams.page, queryParams.count, queryParams.product_id];
   // console.log(params);
   if (queryParams.sort === 'helpful') {
-    return (pool.query(`SELECT * FROM reviews
-    WHERE product_id=$3
+    return (pool.query`SELECT reviews.*, photos.url
+    FROM reviews
+    LEFT JOIN photos
+    ON photos.review_id = reviews.id
+    WHERE product_id = $3
+    AND reviews.id IN
+    (SELECT reviews.id FROM reviews
+    WHERE product_id = $3
     ORDER BY helpfulness DESC
-    LIMIT $2 OFFSET $1`, params));
+    LIMIT $2 OFFSET $1)`, params);
   }
-  if (queryParams.sort === 'meta') {
-    return (pool.query('SELECT * FROM reviews WHERE product_id=$1', [queryParams.product_id]));
-  }
+  // if (queryParams.sort === 'meta') {
+  //   return (pool.query('SELECT * FROM reviews WHERE product_id=$1', [queryParams.product_id]));
+  // }
+  /* This is the old method minus photos
   return (pool.query(`SELECT * FROM reviews
   WHERE product_id=$3
   ORDER BY date DESC
   LIMIT $2 OFFSET $1`, params));
-  // { page: '1', count: '1', sort: 'newest', product_id: '1' }
-  // ['1', '1', newest, '1']
+  */
+  return (pool.query(`SELECT reviews.*, photos.url
+  FROM reviews
+  LEFT JOIN photos
+  ON photos.review_id = reviews.id
+  WHERE product_id = $3
+  AND reviews.id IN
+  (SELECT reviews.id FROM reviews
+  WHERE product_id = $3
+  ORDER BY date DESC
+  LIMIT $2 OFFSET $1)`, params));
 };
 
+/*
+Deprecated
 exports.readPhotos = (review_id) => (
   pool.query('SELECT * FROM photos WHERE review_id=$1', [review_id])
     .then((response) => {
+      // console.log(response.rows);
       const retArr = [];
       for (let i = 0; i < response.rows.length; i += 1) {
         const retObj = {
@@ -52,6 +76,7 @@ exports.readPhotos = (review_id) => (
       console.log('error in photos query', err.message);
     })
 );
+*/
 
 exports.modifyEntry = (params) => {
   // object id, type of entry

@@ -7,32 +7,49 @@ exports.get = (data) => (
       if (response.rows.length === 0) { // if there is no reviews
         return Promise.resolve({});
       }
+      // this will return duplicates where url they have multiple urls
+      // console.log('data2: ', response.rows);
       const modifiedResponse = {
         product: response.rows[0].product_id,
         page: data.page,
         count: data.count,
         results: [],
       };
+      let curUrl = [];
+      // this for loop scans for duplicates and adds the urls for the photos to an array
+      // then it adds all objects to the response
+      // console.log('response: ', response.rows);
       for (let i = 0; i < response.rows.length; i += 1) {
-        const newObj = {
-          review_id: response.rows[i].id,
-          rating: response.rows[i].rating,
-          summary: response.rows[i].summary,
-          recommend: response.rows[i].recommend,
-          response: response.rows[i].response,
-          body: response.rows[i].body,
-          date: response.rows[i].date,
-          reviewer_name: response.rows[i].reviewer_name,
-          helpfulness: response.rows[i].helpfulness,
-          // eslint-disable-next-line no-await-in-loop
-          photos: await (database.readPhotos(response.rows[i].id)),
-        };
-        // console.log('response', response.rows);
-
-        modifiedResponse.results.push(newObj);
+        if (response.rows[i + 1] !== undefined && response.rows[i].id === response.rows[i + 1].id) {
+          curUrl.push(response.rows[i].url);
+        } else {
+          if (response.rows[i].url !== null) {
+            curUrl.push(response.rows[i].url);
+          }
+          const newObj = {
+            review_id: response.rows[i].id,
+            rating: response.rows[i].rating,
+            summary: response.rows[i].summary,
+            recommend: response.rows[i].recommend,
+            response: response.rows[i].response,
+            body: response.rows[i].body,
+            date: response.rows[i].date,
+            reviewer_name: response.rows[i].reviewer_name,
+            helpfulness: response.rows[i].helpfulness,
+            // eslint-disable-next-line no-await-in-loop
+            // photos: await (database.readPhotos(response.rows[i].id)),
+            photos: curUrl,
+          };
+          // console.log('response', response.rows);
+          modifiedResponse.results.push(newObj);
+          curUrl = [];
+        }
       }
       return Promise.resolve(modifiedResponse);
-    }).catch((err) => console.log('error in model: ', err.message))
+    }).catch((err) => {
+      console.log('error in model: ', err.message);
+      console.log('DETAIL: ', err.detail);
+    })
 );
 
 exports.put = (params) => (
