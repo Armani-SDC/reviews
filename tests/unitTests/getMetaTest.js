@@ -8,7 +8,7 @@ export const options = {
       startVUs: 100,
       stages: [
         {duration : '1s', target: 1050},
-        {duration : '1m', target: 1050},
+        {duration : '5m', target: 1050},
       ]
     }
   }

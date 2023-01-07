@@ -12,17 +12,38 @@ const pool = new Pool({
 
 // query per product
 // can pass in rowMode?: 'array' to get an array ack
-exports.readMeta = (review_id) => (
+exports.readMeta = (product_id) => (
+  pool.query(`SELECT meta.review_id, reviews.rating, reviews.recommend, meta.value, characteristics.id, characteristics.name
+  FROM reviews
+    JOIN meta
+      ON meta.review_id = reviews.id
+    JOIN characteristics
+      ON meta.characteristics_id = characteristics.id
+  AND reviews.product_id = $1`, [product_id])
+  /*
+  This is the old query:
   pool.query('SELECT * FROM meta INNER JOIN characteristics ON meta.characteristics_id = characteristics.id AND review_id=$1', [review_id])
-    .then((response) => response.rows)
-    .catch((err) => {
-      console.log('error in meta query', err.message);
-    })
+      .then((response) => response.rows)
+      .catch((err) => {
+        console.log('error in meta query', err.message);
+      })
+  */
 );
 
 exports.readReviews = (queryParams) => {
   const params = [queryParams.page, queryParams.count, queryParams.product_id];
   // console.log(params);
+
+  // pool.query('select reviews.*, photos.url FROM reviews left join photos on photos.review_id = reviews.id where product_id = 4 AND reviews.id in (select reviews.id from reviews where product_id = 4 order by date desc limit 5 offset 0)')
+  // pool.query(`SELECT meta.review_id, reviews.rating, reviews.recommend, meta.value, characteristics.id, characteristics.name
+  //   FROM reviews
+  //     JOIN meta
+  //       ON meta.review_id = reviews.id
+  //     JOIN characteristics
+  //       ON meta.characteristics_id = characteristics.id
+  //   AND reviews.product_id = 4`)
+  //   .then((data) => console.log('data: ', data.rows))
+  //   .catch((err) => console.log('error in query: ', err.message, 'details: ', err.detail));
   if (queryParams.sort === 'helpful') {
     return (pool.query`SELECT reviews.*, photos.url
     FROM reviews
@@ -35,9 +56,9 @@ exports.readReviews = (queryParams) => {
     ORDER BY helpfulness DESC
     LIMIT $2 OFFSET $1)`, params);
   }
-  // if (queryParams.sort === 'meta') {
-  //   return (pool.query('SELECT * FROM reviews WHERE product_id=$1', [queryParams.product_id]));
-  // }
+  if (queryParams.sort === 'meta') {
+    return (pool.query('SELECT * FROM reviews WHERE product_id=$1', [queryParams.product_id]));
+  }
   /* This is the old method minus photos
   return (pool.query(`SELECT * FROM reviews
   WHERE product_id=$3

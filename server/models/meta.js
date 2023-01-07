@@ -3,9 +3,9 @@ const axios = require('axios');
 const database = require('../postgres');
 
 exports.get = (product_id) => (
-  database.readReviews({ product_id, sort: 'meta' })
-    .then(async (response) => {
-      // console.log(response.rows);
+  database.readMeta(product_id)
+    .then((response) => {
+      // console.log(response);
       const modifiedResponse = {
         product_id,
         ratings: {},
@@ -15,37 +15,37 @@ exports.get = (product_id) => (
         },
         characteristics: {},
       };
-      const responseLength = response.rows.length;
-      for (let i = 0; i < responseLength; i += 1) {
-        if (response.rows[i].recommend) {
-          modifiedResponse.recommended['1'] += 1;
-        } else {
-          modifiedResponse.recommended['0'] += 1;
-        }
-        if (modifiedResponse.ratings[response.rows[i].rating] === undefined) {
-          modifiedResponse.ratings[response.rows[i].rating] = 1;
-        } else {
-          modifiedResponse.ratings[response.rows[i].rating] += 1;
-        }
-        // eslint-disable-next-line no-await-in-loop
-        const characteristics = await database.readMeta(response.rows[i].id);
-        // console.log('characteristics: ', characteristics);
-        // console.log('mod response in loop: ', modifiedResponse);
-        // add up all the values for a characteristic and then divide by total of reviews
-        for (let j = 0; j < characteristics.length; j += 1) {
-          const curName = characteristics[j].name;
-          if (modifiedResponse.characteristics[curName] === undefined) {
-            modifiedResponse.characteristics[characteristics[j].name] = {};
-            modifiedResponse.characteristics[curName].id = characteristics[j].characteristics_id;
-            modifiedResponse.characteristics[curName].value = characteristics[j].value;
+      let individualReviews = 0;
+      let curReview = -1;
+      for (let i = 0; i < response.rowCount; i += 1) {
+        if (curReview !== response.rows[i].review_id) {
+          individualReviews += 1;
+          curReview = response.rows[i].review_id;
+          if (response.rows[i].recommend) {
+            modifiedResponse.recommended['1'] += 1;
           } else {
-            modifiedResponse.characteristics[curName].value += characteristics[j].value;
+            modifiedResponse.recommended['0'] += 1;
           }
+          if (modifiedResponse.ratings[response.rows[i].rating] === undefined) {
+            modifiedResponse.ratings[response.rows[i].rating] = 1;
+          } else {
+            modifiedResponse.ratings[response.rows[i].rating] += 1;
+          }
+        }
+        // add up all the values for a characteristic and then divide by total of reviews
+        const curName = response.rows[i].name;
+        if (modifiedResponse.characteristics[curName] === undefined) {
+          modifiedResponse.characteristics[curName] = {};
+          modifiedResponse.characteristics[curName].id = response.rows[i].id;
+          modifiedResponse.characteristics[curName].value = response.rows[i].value;
+        } else {
+          modifiedResponse.characteristics[curName].value += response.rows[i].value;
         }
       }
       // console.log('mod response after loop: ', modifiedResponse);
-      for(let element in modifiedResponse.characteristics) {
-        modifiedResponse.characteristics[element].value /= responseLength;
+      const charKeys = Object.keys(modifiedResponse.characteristics);
+      for (let i = 0; i < charKeys.length; i += 1) {
+        modifiedResponse.characteristics[charKeys[i]].value /= individualReviews;
       }
       return Promise.resolve(modifiedResponse);
     })

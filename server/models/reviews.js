@@ -3,12 +3,12 @@ const database = require('../postgres');
 
 exports.get = (data) => (
   database.readReviews(data)
-    .then(async (response) => {
-      if (response.rows.length === 0) { // if there is no reviews
+    .then((response) => {
+      if (response.rowCount === 0) { // if there is no reviews
         return Promise.resolve({});
       }
       // this will return duplicates where url they have multiple urls
-      // console.log('data2: ', response.rows);
+      // console.log('data2: ', response);
       const modifiedResponse = {
         product: response.rows[0].product_id,
         page: data.page,
@@ -19,7 +19,7 @@ exports.get = (data) => (
       // this for loop scans for duplicates and adds the urls for the photos to an array
       // then it adds all objects to the response
       // console.log('response: ', response.rows);
-      for (let i = 0; i < response.rows.length; i += 1) {
+      for (let i = 0; i < response.rowCount; i += 1) {
         if (response.rows[i + 1] !== undefined && response.rows[i].id === response.rows[i + 1].id) {
           curUrl.push(response.rows[i].url);
         } else {
