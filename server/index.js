@@ -16,4 +16,8 @@ app.use(express.json());
 
 app.use('/', router);
 
+app.get('/loaderio-446de1c19f6c7b5d6b4db29612425543', (req, res) => {
+  res.send('loaderio-446de1c19f6c7b5d6b4db29612425543');
+});
+
 console.log(`Listening at http://localhost:${PORT}`);
